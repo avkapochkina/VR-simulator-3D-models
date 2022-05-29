@@ -10,5 +10,7 @@
 сборка механизма гашетки.
 - [VR-simulator-3D-models/Механизм/](https://github.com/avkapochkina/VR-simulator-3D-models/tree/main/%D0%9C%D0%B5%D1%85%D0%B0%D0%BD%D0%B8%D0%B7%D0%BC)
 общая сборка механизма (штурвал, гашетка).
+- [VR-simulator-3D-models/Стойка/](https://github.com/avkapochkina/VR-simulator-3D-models/tree/main/%D0%A1%D1%82%D0%BE%D0%B9%D0%BA%D0%B0)
+общая сборка со стойкой.
 - [VR-simulator-3D-models/Чертежи/](https://github.com/avkapochkina/VR-simulator-3D-models/tree/main/%D0%A7%D0%B5%D1%80%D1%82%D0%B5%D0%B6%D0%B8)
 конструкторская документация.
