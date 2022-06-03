@@ -1,0 +1,121 @@
+// библиотеки
+#include <ACE128.h>
+#include <ACE128map12345678.h>
+#include <Wire.h>
+#include <Keyboard.h>
+
+// пины энкодера ems22a
+const int PIN_CS = 10;
+const int PIN_CLOCK = 15;
+const int PIN_DATA = 16;
+
+// создание объекта для работы с энкодером ace128wwwwwwww
+ACE128 myACE(2, 3, 4, 5, 6, 7, 8, 9, (uint8_t*)encoderMap_12345678);
+
+uint8_t pinPos = 0;
+
+// константы для энкодера ace128
+byte upos = 0;
+//byte readACE = 0;
+uint8_t oldPos = 255;
+int oldPos_s = 0;
+// константы для вывода в Serial
+int border = 40;
+
+// Представление угла поворота штурвала в байтах
+union {
+  float f;
+  byte b[4];
+} positionS;
+
+// Представление угла поворота ручки в байтах
+union {
+  float f;
+  byte b[4];
+} positionG;
+
+void setup() {
+  // подключаем сериал
+  Serial.begin(9600);
+
+  // настраиваем энкодер ace128wwwwwwwwwwwwwwwwwwww
+  myACE.begin();
+  pinPos = myACE.acePins();
+  oldPos = pinPos;
+
+  // настраиваем энкодер ems22a
+   pinMode(10, OUTPUT);
+   digitalWrite(10, HIGH);
+  pinMode(PIN_CS, OUTPUT);
+  pinMode(PIN_CLOCK, OUTPUT);
+  pinMode(PIN_DATA, INPUT);
+  digitalWrite(PIN_CLOCK, HIGH);
+  digitalWrite(PIN_CS, LOW);
+}
+
+int penPosition = 0;
+int oldPosition = myACE.upos();
+int pos_s_Old = 0;
+int i = 0;
+void loop() {
+  // получение значений с энкодера ems22a
+  digitalWrite(PIN_CS, HIGH);
+  digitalWrite(PIN_CS, LOW);
+  int pos_s = 0;
+
+  for (int i = 0; i < 10; i++) {
+    digitalWrite(PIN_CLOCK, LOW);
+    digitalWrite(PIN_CLOCK, HIGH);
+    byte b = digitalRead(PIN_DATA) == HIGH ? 1 : 0;
+    pos_s += b * pow(2, 10 - (i + 1));
+  }
+
+  for (int i = 0; i < 6; i++) {
+    digitalWrite(PIN_CLOCK, LOW);
+    digitalWrite(PIN_CLOCK, HIGH);
+  }
+  digitalWrite(PIN_CLOCK, LOW);
+  digitalWrite(PIN_CLOCK, HIGH);
+  
+  // получение значений с энкодера ace128wssssssssssssswwwwwwwwwwwwwwwwwwwwssssswwwwwwwwwwwwswsssssswwwwwwwsssswwwwwwswwwwwwssssssssswwwwsssssswwwwwwswwwwwwwwwsssssssss
+  upos = myACE.upos();
+  if ((upos - oldPosition) == 1){
+      Keyboard.press('w');Keyboard.press('w');Keyboard.press('w');
+      delay(100);
+      Keyboard.releaseAll();
+  }else if ((upos - oldPosition) == -1){
+      Keyboard.press('s');Keyboard.press('s');Keyboard.press('s');
+      delay(100);
+      Keyboard.releaseAll();
+  }else if ((upos - oldPosition) == -127){
+      Keyboard.press('s');Keyboard.press('s');Keyboard.press('s');
+      delay(100);
+      Keyboard.releaseAll();
+  }else if ((upos - oldPosition) == 127){
+      Keyboard.press('w');Keyboard.press('w');Keyboard.press('w');
+      delay(100);
+      Keyboard.releaseAll();
+  }
+  oldPosition = upos;//wswwwssswsswwsddadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadaddadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadada
+  pos_s=pos_s;//aaaadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadaadadadadadadadadadadadadadadadadadadaadadadadadadadadadadadadadaaddadadadadadaadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadaddadadadaadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadaddaadaddaadadadadadadadadadadadaaadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadddddaddaddddddddddddadadadadadadadadadadadadadadadadadadaaaaadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadada
+  
+  if ((pos_s - pos_s_Old) == -1){
+      Keyboard.press('a');Keyboard.press('a');Keyboard.press('a');
+      delay(100);
+      Keyboard.releaseAll();
+  }else if ((pos_s - pos_s_Old) == 1){
+      Keyboard.press('d');Keyboard.press('d');Keyboard.press('d');
+      delay(100);
+      Keyboard.releaseAll();
+  }else if ((pos_s - pos_s_Old) == 1023){
+      Keyboard.press('d');Keyboard.press('d');Keyboard.press('d');
+      delay(100);
+      Keyboard.releaseAll();
+  }else if ((pos_s - pos_s_Old)  == -1023){
+      Keyboard.press('a');Keyboard.press('a');Keyboard.press('a');
+      delay(100);
+      Keyboard.releaseAll();
+  }
+ //
+ pos_s_Old = pos_s;
+}
